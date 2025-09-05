@@ -1,0 +1,5 @@
+1 . Find out what the error from running through the terminal and fix it.
+2.  Create a CRUD res api for a domain object called employee
+    -- employee needs first name, last name and zip code 
+    -- devolp res api with "/api/employee and it should have methods GET, POST, DELETE(CRUD operations).
+3. make a git working and link this project to the project in the github 

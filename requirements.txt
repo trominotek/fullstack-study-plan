@@ -1,0 +1,8 @@
+Flask==3.0.3
+Flask-Cors==4.0.0
+Flask-RESTful==0.3.10
+gunicorn==23.0.0         # for production WSGI server
+psycopg2-binary==2.9.9   # PostgreSQL driver
+SQLAlchemy==2.0.34       # ORM (works with Postgres)
+alembic==1.13.2          # database migrations
+python-dotenv==1.0.1     # manage environment variables
