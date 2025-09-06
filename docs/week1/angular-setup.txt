@@ -1,0 +1,81 @@
+# Angular Project Setup Guide
+
+## Step 1: Install Node.js
+```bash
+# Download and install Node.js from https://nodejs.org/
+node --version
+npm --version
+```
+**Explanation:** Node.js provides the JavaScript runtime environment. npm (Node Package Manager) comes with Node.js and manages project dependencies. Angular requires Node.js version 18.13.0 or later.
+
+## Step 2: Install Angular CLI Globally
+```bash
+npm install -g @angular/cli
+```
+**Explanation:** Angular CLI is a command-line tool that helps create, build, and maintain Angular projects. Installing it globally (-g flag) makes the 'ng' command available system-wide.
+
+## Step 3: Verify Angular CLI Installation
+```bash
+ng version
+```
+**Explanation:** This command confirms Angular CLI is installed correctly and shows version information for Angular CLI and other related packages.
+
+## Step 4: Create New Angular Project
+```bash
+ng new ui
+```
+**Explanation:** Creates a new Angular project named "ui" with all necessary files, folder structure, and initial configuration. This command sets up a complete Angular workspace.
+
+## Step 5: Configure Project Options
+When prompted, choose:
+- **Add Angular routing?** → Y (Yes)
+- **Stylesheet format?** → SCSS
+
+**Explanation:** 
+- Routing enables navigation between different views/pages in your app
+- SCSS provides enhanced CSS features like variables, nesting, and mixins
+
+## Step 6: Navigate to Project Directory
+```bash
+cd ui
+```
+**Explanation:** Changes your current directory to the newly created Angular project folder where all project files are located.
+
+## Step 7: Install Project Dependencies
+```bash
+npm install
+```
+**Explanation:** Downloads and installs all the packages listed in package.json. These are the libraries and tools your Angular project needs to run.
+
+## Step 8: Start Development Server
+```bash
+ng serve
+```
+**Explanation:** Starts a local development server that compiles your Angular app and serves it at http://localhost:4200. It also watches for file changes and automatically reloads the browser.
+
+## Step 9: Verify Setup
+Open browser to: http://localhost:4200
+
+**Explanation:** You should see the Angular welcome page, confirming everything is working correctly. This page is generated from src/app/app.component.html.
+
+## Project Structure Overview
+```
+ui/
+├── src/app/                 # Main application code
+│   ├── app.component.ts     # Root component logic
+│   ├── app.component.html   # Root component template
+│   ├── app.component.scss   # Root component styles
+│   └── app.module.ts        # Root module (app configuration)
+├── src/assets/              # Static files (images, fonts, etc.)
+├── src/environments/        # Environment-specific settings
+├── angular.json             # Angular CLI configuration
+├── package.json             # Project dependencies and scripts
+└── tsconfig.json           # TypeScript compiler options
+```
+
+## Next Steps After Setup
+1. Explore the default app.component files
+2. Create your first custom component
+3. Learn about data binding and templates
+4. Add routing for multiple pages
+5. Integrate services for data management
