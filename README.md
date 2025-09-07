@@ -1,4 +1,4 @@
-# Full-Stack Developer Training Plan (Python + React + Docker + Postgres + Okta + AWS)
+# Full-Stack Developer Training Plan (Python + Angular + Docker + Postgres + Okta + AWS)
 
 This repository contains a **2-month structured training plan** (15 hours per week) designed to prepare a computer science student for their first full-stack development job in Canada (Vancouver or Toronto).  
 The training culminates in a **capstone project: Notes App**, a production-ready, full-stack note-taking application.
@@ -19,28 +19,28 @@ The training culminates in a **capstone project: Notes App**, a production-ready
 - Implement migrations with Alembic.
 - **Deliverable:** Notes API extended to store notes in Postgres.
 
-### Week 3 – ReactJS Basics (15h)
-- Learn React fundamentals (components, state, hooks).
-- Fetch data from an API with Axios/fetch.
+### Week 3 – Angular Basics (15h)
+- Learn Angular fundamentals (components, services, dependency injection).
+- Fetch data from an API with HTTP Client.
 - **Deliverable:** Notes App frontend that displays and adds notes.
 
 ### Week 4 – Full-Stack Integration (15h)
-- Connect React frontend to Flask backend.
+- Connect Angular frontend to Flask backend.
 - Handle CORS, API calls, and JSON responses.
-- **Deliverable:** Full-stack Notes App (React + Flask + Postgres).
+- **Deliverable:** Full-stack Notes App (Angular + Flask + Postgres).
 
 ### Week 5 – Authentication with Okta (15h)
 - Learn authentication & OAuth2 basics.
 - Integrate Okta for login/logout.
 - Secure backend routes with JWT validation.
-- Secure frontend with Okta SDK.
+- Secure Angular frontend with Okta SDK.
 - **Deliverable:** Notes App with user authentication.
 
 ### Week 6 – Docker & Deployment Prep (15h)
 - Learn Docker basics (Dockerfile, docker-compose).
 - Containerize:
   - Flask backend
-  - React frontend
+  - Angular frontend
   - Postgres DB
 - **Deliverable:** Full app running in Docker Compose.
 
@@ -70,14 +70,14 @@ A **full-stack note-taking application** that demonstrates backend, frontend, da
 - **Authentication (Okta):** Users must log in to access notes.
 - **CRUD Operations:** Create, read, update, and delete notes.
 - **Database (Postgres):** Notes stored securely with user ownership.
-- **Frontend (ReactJS):** UI for managing notes with forms and lists.
+- **Frontend (Angular):** UI for managing notes with forms and lists.
 - **Backend (Flask/FastAPI):** REST API endpoints for managing notes.
 - **Docker:** Containerized deployment for backend, frontend, and database.
 - **AWS Deployment:** Full app deployed to AWS (EC2/RDS/S3/CloudFront).
 
 ### Tech Stack
 - **Backend:** Python (Flask/FastAPI), SQLAlchemy, Alembic
-- **Frontend:** ReactJS, Axios, TailwindCSS (optional styling)
+- **Frontend:** Angular, HTTP Client, Angular Material (optional styling)
 - **Database:** PostgreSQL
 - **Authentication:** Okta (OAuth2/JWT)
 - **Deployment:** Docker, AWS (EC2, RDS, S3, CloudFront/Amplify)
@@ -86,7 +86,7 @@ A **full-stack note-taking application** that demonstrates backend, frontend, da
 
 ## 🔄 User Flow
 1. User logs in via **Okta**.  
-2. React frontend fetches user’s notes from the Flask backend.  
+2. Angular frontend fetches user's notes from the Flask backend.  
 3. User can **create, edit, or delete** notes through the UI.  
 4. Backend validates JWT, processes requests, and interacts with Postgres.  
 5. Notes are securely stored in **Postgres** and linked to the user.  
@@ -99,7 +99,7 @@ A **full-stack note-taking application** that demonstrates backend, frontend, da
 By the end of this training program, the student will have:
 
 - **Backend Notes API** (Flask/FastAPI + Postgres).  
-- **Full-Stack Notes App** (React + Flask + Postgres).  
+- **Full-Stack Notes App** (Angular + Flask + Postgres).  
 - **Capstone Project**: Secure, containerized, AWS-deployed Notes App with Okta authentication.  
 - **GitHub Repository** with:
   - Codebase
