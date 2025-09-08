@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { DataService, Item } from '../services/data.service';
+import { DataService, Item } from '../../services/data.service';
 
 @Component({
   selector: 'app-item-list',
