@@ -13,7 +13,7 @@ export interface Item {
   providedIn: 'root'
 })
 export class DataService {
-  private apiUrl = 'http://192.168.86.22:5003';
+  private apiUrl = 'http://localhost:5003';
 
   constructor(private http: HttpClient) { }
 
