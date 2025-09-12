@@ -3,3 +3,11 @@
     -- employee needs first name, last name and zip code 
     -- devolp res api with "/api/employee and it should have methods GET, POST, DELETE(CRUD operations).
 3. make a git working and link this project to the project in the github 
+
+
+1. understand the basics of angular reading core cocnepts and angular website 
+2. modify the backend refactor the code to have a main application for the whole company
+3. refactor the employee code and call it form the company and when the company runs the employee api gets exposed
+4. create another domain objects called departement and include that in the main so that the both emploeye and department when the app run both the apis are exposed 
+5. uri - /api/employee  /api/department 
+6. build ui for department 

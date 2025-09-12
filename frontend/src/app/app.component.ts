@@ -8,9 +8,7 @@ import { NavComponent } from './components/nav/nav.component';
   imports: [RouterOutlet, NavComponent],
   template: `
     <app-nav></app-nav>
-    <main class="container" style="padding:1rem">
-      <router-outlet></router-outlet>
-    </main>
+    <router-outlet></router-outlet>
   `,
 })
 export class App {}

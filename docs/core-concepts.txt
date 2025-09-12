@@ -1,0 +1,445 @@
+# Angular Core Concepts - Phase 1 (Week 1-2)
+
+## 1. Angular Architecture (Standalone vs Modules)
+
+### What is Angular Architecture?
+Angular applications are built using components organized in a hierarchical structure. There are two main architectural approaches:
+
+### Module-Based Architecture (Traditional - Angular 2-13)
+```typescript
+// app.module.ts
+@NgModule({
+  declarations: [
+    AppComponent,
+    ItemListComponent,
+    ItemFormComponent
+  ],
+  imports: [
+    BrowserModule,
+    HttpClientModule,
+    FormsModule,
+    AppRoutingModule
+  ],
+  providers: [DataService],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+```
+
+**Characteristics:**
+- Everything is organized in modules (NgModules)
+- Components must be declared in modules
+- Services are provided at module level
+- Routing is configured in separate routing modules
+
+### Standalone Components (Modern - Angular 14+)
+```typescript
+// app.config.ts
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideRouter(routes),
+    provideHttpClient(withFetch())
+  ]
+};
+
+// component.ts
+@Component({
+  selector: 'app-item-list',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  templateUrl: './item-list.component.html'
+})
+export class ItemListComponent { }
+```
+
+**Characteristics:**
+- Components are self-contained (standalone: true)
+- Each component declares its own imports
+- Providers are configured in app.config.ts
+- Simpler, more modular approach
+
+### Key Differences:
+| Aspect | Module-Based | Standalone |
+|--------|-------------|------------|
+| Setup Complexity | High | Low |
+| Bundle Size | Larger | Smaller |
+| Learning Curve | Steep | Gentler |
+| Tree Shaking | Limited | Better |
+| Recommended for | Large apps | All apps (modern) |
+
+### When to Use Which?
+- **Standalone**: New projects, simpler apps, modern Angular approach
+- **Modules**: Legacy projects, large enterprise apps with complex module structure
+
+---
+
+## 2. Component Basics and Templates
+
+### What are Components?
+Components are the fundamental building blocks of Angular applications. They control a portion of the screen (view) and contain:
+- HTML template (what the user sees)
+- TypeScript class (component logic)
+- CSS styles (how it looks)
+- Metadata (configuration via decorators)
+
+### Component Structure:
+```typescript
+@Component({
+  selector: 'app-item-list',           // How to use in HTML: <app-item-list>
+  standalone: true,                   // Standalone component
+  imports: [CommonModule],            // Dependencies needed
+  templateUrl: './item-list.html',    // HTML template file
+  styleUrl: './item-list.css'         // CSS styles file
+})
+export class ItemListComponent implements OnInit {
+  // Properties (data)
+  items: Item[] = [];
+  isLoading = false;
+  
+  // Constructor (dependency injection)
+  constructor(private dataService: DataService) {}
+  
+  // Lifecycle method
+  ngOnInit() {
+    this.loadItems();
+  }
+  
+  // Methods (behavior)
+  loadItems() {
+    this.dataService.getAll().subscribe(data => {
+      this.items = data;
+    });
+  }
+}
+```
+
+### Templates and Data Binding:
+
+#### 1. Interpolation - Display Data
+```html
+<h2>{{title}}</h2>
+<p>Items count: {{items.length}}</p>
+```
+
+#### 2. Property Binding - Set Element Properties
+```html
+<input [value]="itemName" [disabled]="isLoading">
+<img [src]="imageUrl" [alt]="imageDescription">
+```
+
+#### 3. Event Binding - Handle User Events
+```html
+<button (click)="saveItem()">Save</button>
+<input (keyup)="onKeyUp($event)">
+```
+
+#### 4. Two-Way Binding - Combine Property and Event
+```html
+<input [(ngModel)]="itemName">
+<!-- Equivalent to: -->
+<input [ngModel]="itemName" (ngModelChange)="itemName=$event">
+```
+
+### Structural Directives:
+
+#### *ngIf - Conditional Rendering
+```html
+<div *ngIf="isLoading">Loading...</div>
+<div *ngIf="!isLoading && items.length === 0">No items found</div>
+```
+
+#### *ngFor - Loop Through Lists
+```html
+<div *ngFor="let item of items; let i = index">
+  <h3>{{i + 1}}. {{item.name}}</h3>
+  <p>{{item.description}}</p>
+</div>
+```
+
+#### *ngSwitch - Multiple Conditions
+```html
+<div [ngSwitch]="status">
+  <p *ngSwitchCase="'loading'">Loading items...</p>
+  <p *ngSwitchCase="'error'">Error occurred</p>
+  <p *ngSwitchCase="'success'">Items loaded successfully</p>
+  <p *ngSwitchDefault>Unknown status</p>
+</div>
+```
+
+### Component Communication:
+
+#### Parent to Child - @Input()
+```typescript
+// Child Component
+export class ItemComponent {
+  @Input() item: Item;
+  @Input() showDetails: boolean = false;
+}
+```
+```html
+<!-- Parent Template -->
+<app-item [item]="selectedItem" [showDetails]="true"></app-item>
+```
+
+#### Child to Parent - @Output()
+```typescript
+// Child Component
+export class ItemComponent {
+  @Output() itemSelected = new EventEmitter<Item>();
+  
+  onSelect() {
+    this.itemSelected.emit(this.item);
+  }
+}
+```
+```html
+<!-- Parent Template -->
+<app-item (itemSelected)="onItemSelected($event)"></app-item>
+```
+
+---
+
+## 3. Services and Dependency Injection
+
+### What are Services?
+Services are classes that handle business logic, data access, and functionality that doesn't belong in components. They provide:
+- Data sharing between components
+- HTTP API communication
+- Business logic separation
+- Reusable functionality
+
+### Creating a Service:
+```typescript
+@Injectable({
+  providedIn: 'root'  // Available application-wide
+})
+export class DataService {
+  private apiUrl = 'http://localhost:5003';
+  
+  constructor(private http: HttpClient) { }
+  
+  getAll(): Observable<Item[]> {
+    return this.http.get<Item[]>(`${this.apiUrl}/items`);
+  }
+  
+  create(item: Item): Observable<Item> {
+    return this.http.post<Item>(`${this.apiUrl}/items`, item);
+  }
+}
+```
+
+### Dependency Injection (DI):
+
+#### What is DI?
+Dependency Injection is a design pattern where dependencies are provided to a class rather than the class creating them itself.
+
+#### Without DI (Bad):
+```typescript
+export class ItemListComponent {
+  private http = new HttpClient(); // Hard to test, tightly coupled
+}
+```
+
+#### With DI (Good):
+```typescript
+export class ItemListComponent {
+  constructor(private dataService: DataService) { } // Injected dependency
+}
+```
+
+### Service Registration:
+
+#### 1. Root Level (Singleton)
+```typescript
+@Injectable({
+  providedIn: 'root'  // One instance for entire app
+})
+```
+
+#### 2. Component Level
+```typescript
+@Component({
+  providers: [DataService]  // New instance for each component
+})
+```
+
+#### 3. App Config (Standalone)
+```typescript
+export const appConfig: ApplicationConfig = {
+  providers: [
+    DataService,
+    provideHttpClient()
+  ]
+};
+```
+
+### Using Services in Components:
+```typescript
+export class ItemListComponent implements OnInit {
+  items: Item[] = [];
+  
+  constructor(private dataService: DataService) { }
+  
+  ngOnInit() {
+    this.loadItems();
+  }
+  
+  loadItems() {
+    this.dataService.getAll().subscribe({
+      next: (data) => this.items = data,
+      error: (error) => console.error('Error:', error)
+    });
+  }
+}
+```
+
+---
+
+## 4. Basic Routing
+
+### What is Routing?
+Routing enables navigation between different views/components in a Single Page Application (SPA). Users can:
+- Navigate using URLs
+- Use browser back/forward buttons
+- Bookmark specific pages
+- Share links
+
+### Setting Up Routes:
+
+#### 1. Define Routes (app.routes.ts)
+```typescript
+import { Routes } from '@angular/router';
+import { ItemListComponent } from './components/item-list/item-list.component';
+import { ItemFormComponent } from './components/item-form/item-form.component';
+import { ItemDetailComponent } from './components/item-detail/item-detail.component';
+
+export const routes: Routes = [
+  { path: '', redirectTo: '/items', pathMatch: 'full' },  // Default route
+  { path: 'items', component: ItemListComponent },        // List view
+  { path: 'items/new', component: ItemFormComponent },    // Create form
+  { path: 'items/:id', component: ItemDetailComponent },  // Detail with param
+  { path: 'items/edit/:id', component: ItemFormComponent }, // Edit form
+  { path: '**', redirectTo: '/items' }                   // Wildcard (404)
+];
+```
+
+#### 2. Configure Router (app.config.ts)
+```typescript
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideRouter(routes),
+    // other providers...
+  ]
+};
+```
+
+#### 3. Add Router Outlet (app.component.html)
+```html
+<nav>
+  <a routerLink="/items">Items</a>
+  <a routerLink="/items/new">Add Item</a>
+</nav>
+
+<main>
+  <router-outlet></router-outlet>  <!-- Components render here -->
+</main>
+```
+
+### Navigation Methods:
+
+#### 1. Template Navigation (RouterLink)
+```html
+<a routerLink="/items">Items List</a>
+<a [routerLink]="['/items', item.id]">View Item</a>
+<a routerLink="/items/new" routerLinkActive="active">Add New</a>
+```
+
+#### 2. Programmatic Navigation
+```typescript
+export class ItemListComponent {
+  constructor(private router: Router) { }
+  
+  navigateToDetail(id: number) {
+    this.router.navigate(['/items', id]);
+  }
+  
+  navigateToCreate() {
+    this.router.navigate(['/items/new']);
+  }
+}
+```
+
+### Route Parameters:
+
+#### Reading Route Parameters:
+```typescript
+export class ItemDetailComponent implements OnInit {
+  itemId: number;
+  
+  constructor(private route: ActivatedRoute) { }
+  
+  ngOnInit() {
+    // Snapshot (one-time read)
+    this.itemId = +this.route.snapshot.params['id'];
+    
+    // Observable (reactive to changes)
+    this.route.params.subscribe(params => {
+      this.itemId = +params['id'];
+      this.loadItem();
+    });
+  }
+}
+```
+
+### Route Guards (Advanced):
+```typescript
+// Protect routes with guards
+const routes: Routes = [
+  { 
+    path: 'admin', 
+    component: AdminComponent,
+    canActivate: [AuthGuard]  // Only authenticated users
+  }
+];
+```
+
+---
+
+## Key Concepts Summary
+
+### Architecture Decisions:
+1. **Choose Standalone** for new projects (simpler, modern)
+2. **Understand both** patterns for maintenance
+
+### Component Best Practices:
+1. **Single Responsibility** - Each component should have one clear purpose
+2. **Smart vs Dumb** - Separate data-fetching (smart) from presentation (dumb) components
+3. **Lifecycle Hooks** - Use ngOnInit for initialization, ngOnDestroy for cleanup
+
+### Service Guidelines:
+1. **Injectable Services** - Always use @Injectable decorator
+2. **Separation of Concerns** - Keep business logic in services
+3. **Error Handling** - Handle HTTP errors appropriately
+
+### Routing Principles:
+1. **Clear URL Structure** - Make URLs intuitive and RESTful
+2. **Parameter Handling** - Use route parameters for dynamic content
+3. **Navigation UX** - Provide clear navigation paths
+
+## Next Steps for Practice:
+1. Build a simple todo app using standalone components
+2. Create services for data management
+3. Implement routing between different views
+4. Practice component communication patterns
+5. Add form handling and validation
+
+## Common Pitfalls to Avoid:
+1. Don't mix module and standalone architectures
+2. Don't put business logic in components
+3. Don't forget to unsubscribe from observables
+4. Don't use direct DOM manipulation
+5. Don't ignore TypeScript types and interfaces
+
+---
+
+*This covers the essential Phase 1 concepts you need to master before moving to more advanced Angular topics.*
