@@ -1,8 +1,5 @@
-# backend/company/employee/__init__.py
-from flask import Blueprint, jsonify, request
 import psycopg2
 from psycopg2.extras import RealDictCursor
-
 
 class DatabaseManager:
     def __init__(self, conn_params):
@@ -22,17 +19,11 @@ class DatabaseManager:
                 cursor.execute(query, (name, description))
                 return cursor.fetchone()
     
-
     def get_all_items(self):
-        employees = []
         with self.get_connection() as conn:
             with conn.cursor(cursor_factory=RealDictCursor) as cursor:
-                cursor.execute("SELECT id, first_name, last_name, zip_code FROM public.employee")
-                rows = cursor.fetchall()
-                # Convert rows to list of dicts
-                employees = [dict(row) for row in rows]
-        return employees
-
+                cursor.execute("SELECT * FROM items ORDER BY created_at DESC")
+                return cursor.fetchall()
     
     def get_item_by_id(self, item_id):
         with self.get_connection() as conn:
@@ -57,47 +48,3 @@ class DatabaseManager:
             with conn.cursor() as cursor:
                 cursor.execute("DELETE FROM items WHERE id = %s", (item_id,))
                 return cursor.rowcount > 0
-
-bp = Blueprint("employee", __name__)
-conn_params = {
-    'host': 'localhost',
-    'database': 'fullstack_db',
-    'user': 'fullstack_user',
-    'password': 'fullstack_pass',
-    'port': 5432
-}
-db = DatabaseManager(conn_params)
-
-employees = [
-    {"id": 1, "first_name": "Alice", "last_name": "Smith", "zip_code": "12345"},
-    {"id": 2, "first_name": "Bob", "last_name": "Johnson", "zip_code": "67890"},
-]
-
-
-
-def _next_id():
-    return max((e["id"] for e in employees), default=0) + 1
-
-@bp.get("/")
-def list_employees():
-    # items = db.get_all_items()
-    # print (items)
-    return jsonify(employees)
-
-@bp.post("/")
-def create_employee():
-    data = request.json or {}
-    emp = {
-        "id": _next_id(),
-        "first_name": data.get("first_name", ""),
-        "last_name":  data.get("last_name", ""),
-        "zip_code":   data.get("zip_code", "")
-    }
-    employees.append(emp)
-    return jsonify(emp), 201
-
-@bp.delete("/<int:emp_id>")
-def delete_employee(emp_id):
-    global employees
-    employees = [e for e in employees if e["id"] != emp_id]
-    return jsonify({"deleted_id": emp_id})

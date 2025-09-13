@@ -5,7 +5,7 @@ import { NgIf } from '@angular/common';
 @Component({
   selector: 'app-nav',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, NgIf],
+  imports: [RouterLink, RouterLinkActive],
   template: `
     <nav style="display:flex; gap:1rem; padding:.75rem; border-bottom:1px solid #eee">
       <a routerLink="/employees" routerLinkActive="active">Employees</a>
