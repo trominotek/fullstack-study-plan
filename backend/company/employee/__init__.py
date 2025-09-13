@@ -26,8 +26,8 @@ class DatabaseManager:
             with self.get_connection() as conn:
                 with conn.cursor(cursor_factory=RealDictCursor) as cursor:
                     query = """
-                        INSERT INTO employees (first_name, last_name, zip_code, created_at) 
-                        VALUES (%s, %s, %s, CURRENT_TIMESTAMP) 
+                        INSERT INTO public.employees (first_name, last_name, zip_code, created_at)
+                        VALUES (%s, %s, %s, CURRENT_TIMESTAMP)
                         RETURNING id, first_name, last_name, zip_code, created_at
                     """
                     cursor.execute(query, (first_name, last_name, zip_code))
@@ -43,8 +43,8 @@ class DatabaseManager:
             with self.get_connection() as conn:
                 with conn.cursor(cursor_factory=RealDictCursor) as cursor:
                     cursor.execute("""
-                        SELECT id, first_name, last_name, zip_code, created_at 
-                        FROM employees 
+                        SELECT id, first_name, last_name, zip_code, created_at
+                        FROM public.employees
                         ORDER BY created_at DESC
                     """)
                     rows = cursor.fetchall()
@@ -59,8 +59,8 @@ class DatabaseManager:
             with self.get_connection() as conn:
                 with conn.cursor(cursor_factory=RealDictCursor) as cursor:
                     cursor.execute("""
-                        SELECT id, first_name, last_name, zip_code, created_at 
-                        FROM employees 
+                        SELECT id, first_name, last_name, zip_code, created_at
+                        FROM public.employees
                         WHERE id = %s
                     """, (employee_id,))
                     result = cursor.fetchone()
@@ -75,7 +75,7 @@ class DatabaseManager:
             with self.get_connection() as conn:
                 with conn.cursor(cursor_factory=RealDictCursor) as cursor:
                     query = """
-                        UPDATE employees 
+                        UPDATE public.employees
                         SET first_name = %s, last_name = %s, zip_code = %s, updated_at = CURRENT_TIMESTAMP
                         WHERE id = %s
                         RETURNING id, first_name, last_name, zip_code, updated_at
@@ -92,7 +92,7 @@ class DatabaseManager:
         try:
             with self.get_connection() as conn:
                 with conn.cursor() as cursor:
-                    cursor.execute("DELETE FROM employees WHERE id = %s", (employee_id,))
+                    cursor.execute("DELETE FROM public.employees WHERE id = %s", (employee_id,))
                     return cursor.rowcount > 0
         except psycopg2.Error as e:
             logger.error(f"Error deleting employee {employee_id}: {e}")
@@ -105,7 +105,7 @@ class DatabaseManager:
                 with conn.cursor() as cursor:
                     # Create table
                     cursor.execute("""
-                        CREATE TABLE IF NOT EXISTS employees (
+                        CREATE TABLE IF NOT EXISTS public.employees (
                             id SERIAL PRIMARY KEY,
                             first_name VARCHAR(100) NOT NULL,
                             last_name VARCHAR(100) NOT NULL,
@@ -116,7 +116,7 @@ class DatabaseManager:
                     """)
                     
                     # Check if table has data
-                    cursor.execute("SELECT COUNT(*) FROM employees")
+                    cursor.execute("SELECT COUNT(*) FROM public.employees")
                     count = cursor.fetchone()[0]
                     
                     # Add sample data if table is empty
@@ -130,7 +130,7 @@ class DatabaseManager:
                         
                         for first_name, last_name, zip_code in sample_employees:
                             cursor.execute("""
-                                INSERT INTO employees (first_name, last_name, zip_code)
+                                INSERT INTO public.employees (first_name, last_name, zip_code)
                                 VALUES (%s, %s, %s)
                             """, (first_name, last_name, zip_code))
                         
@@ -258,7 +258,7 @@ def health_check():
         # Test database connection by getting count of employees
         with db.get_connection() as conn:
             with conn.cursor() as cursor:
-                cursor.execute("SELECT COUNT(*) FROM employees")
+                cursor.execute("SELECT COUNT(*) FROM public.employees")
                 count = cursor.fetchone()[0]
         
         return jsonify({
